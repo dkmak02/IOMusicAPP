@@ -24,6 +24,16 @@ async function createGameNewPlaylist(dane, mode) {
   return response;
 }
 
+async function addNewPlayerToGame(gameId, name) {
+  const response = await fetch(
+    `https://yourmelodyapi20221119173116.azurewebsites.net/api/PlayerControler/AddNewPlayerToGame?gameId=${gameId}&playerNickname=${name}`,
+    {
+      method: "POST",
+    }
+  ).then((response) => response.json());
+  return response;
+}
+
 if (
   window.location.href ===
     `${window.location.origin}/partials/insertUrl.html#multi` ||
@@ -143,9 +153,10 @@ if (
     }
   });
   const dane = await getSongs(url);
-  const xd = await createGameNewPlaylist(dane, 1);
-
-  console.log(xd);
+  const game = await createGameNewPlaylist(dane, 1);
+  const players = await addNewPlayerToGame(game, "player1");
+  console.log(game);
+  console.log(players);
   console.log(dane);
   setDane(i);
 }
