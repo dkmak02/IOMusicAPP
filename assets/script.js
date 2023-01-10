@@ -8,6 +8,22 @@ async function getSongs(url) {
   return response.songs;
 }
 
+async function createGameNewPlaylist(dane, mode) {
+  const response = await fetch(
+    `https://yourmelodyapi20221119173116.azurewebsites.net/api/Game/CreateGameNewPlaylist?mode=${mode}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        songs: dane,
+      }),
+    }
+  ).then((response) => response.json());
+  return response;
+}
+
 if (
   window.location.href ===
     `${window.location.origin}/partials/insertUrl.html#multi` ||
@@ -56,7 +72,8 @@ if (
   let title;
   let songId;
   let secToStart;
-  let videoId;
+  let videoUrl;
+  let audioUrl;
   let i = 0;
   let pkt = 0;
   let bledne = 0;
@@ -70,16 +87,26 @@ if (
     } else {
       artist = dane[i].artist === null ? "" : dane[i].artist;
       title = dane[i].title;
+      audioUrl = dane[i].audioUrl;
       songId = dane[i].songId;
       secToStart = dane[i].secToStart + 10;
-      videoId = dane[i].videoId;
+      videoUrl = dane[i].videoUrl;
       player.textContent = "";
       end = secToStart + 15;
+      videoUrl = videoUrl.replace("watch?v=", "embed/");
+      videoUrl = videoUrl.substring(0, videoUrl.indexOf("&"));
       player.insertAdjacentHTML(
         "afterbegin",
-        `<iframe width="660" height="345" src="https://www.youtube.com/embed/${videoId}?modestbranding=1&autohide=1&showinfo=0&controls=0&autoplay=1&rel=0&start=${secToStart}&end=${end}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+        `<iframe width="660" height="345" src="${videoUrl}?modestbranding=1&mute=1&autohide=1&showinfo=0&controls=0&autoplay=1&rel=0&start=${secToStart}&end=${end}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
       );
     }
+    // const audio = new Audio(audioUrl);
+    // audio.currentTime = secToStart;
+    // audio.play();
+    // setTimeout(() => {
+    //   audio.pause();
+    //   player.textContent = "";
+    // }, 15000);
   }
   function check(autor, tytuł) {
     if (bledne === 2) {
@@ -105,15 +132,6 @@ if (
       console.log(wykonawca.value);
       console.log(e.target.value);
       check(wykonawca.value, e.target.value);
-      // fetch(
-      //   "https://yourmelodyapi20221119173116.azurewebsites.net/api/Game/CreateGameNewPlaylist?mode=2",
-      //   {
-      //     method: "POST",
-      //     songs: dane,
-      //     contetType: "application/json",
-      //     accept: "text/plain",
-      //   }
-      // ).then((response) => response.json().then((data) => console.log(data)));
     }
   });
   wykonawca.addEventListener("keyup", (e) => {
@@ -125,6 +143,9 @@ if (
     }
   });
   const dane = await getSongs(url);
+  const xd = await createGameNewPlaylist(dane, 1);
+
+  console.log(xd);
   console.log(dane);
   setDane(i);
 }
