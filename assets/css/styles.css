@@ -280,8 +280,24 @@ body {
   position: relative;
   /* display: flex; */
 }
+.players {
+  position: absolute;
+  margin-left: 50rem;
+  text-align: left;
+  border-radius: 0.4rem;
+  padding: 0.5rem;
+  background-color: #292e338a;
+}
+.player-name {
+  color: #000000;
+}
+.active-player {
+  background-color: #d3632fa6;
+  border-radius: 0.4rem;
+}
 .pudele {
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
 }
