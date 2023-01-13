@@ -33,7 +33,12 @@ async function addNewPlayerToGame(gameId, name) {
   ).then((response) => response.json());
   return response;
 }
-
+async function getGameinfo(gameId) {
+  const response = await fetch(
+    `https://yourmelodyapi20221119173116.azurewebsites.net/api/Game/InformationAboutGame?gameId=${gameId}`
+  ).then((response) => response.json());
+  return response;
+}
 async function playerReply(gameId, songId, title, artist, responseTime) {
   const response = await fetch(
     `https://yourmelodyapi20221119173116.azurewebsites.net/api/Game/PlayerReply?gameId=${gameId}&songId=${songId}&titleByUser=${title}&artistByUser=${artist}&secWhenUserResponce=${responseTime}
@@ -129,6 +134,8 @@ if (
   const dane = await getSongs(url);
   const game = await createGameNewPlaylist(dane, 1);
   const players = await addNewPlayerToGame(game, "player1");
+  //add game to local storage
+  localStorage.setItem("game", game);
   let song = await getSong(game);
   // await playerReply(game, song.id, tytul.value, wykonawca.value, 2);
   console.log(song);
@@ -180,13 +187,32 @@ if (
         song = await getSong(game);
         setDane(song);
       } catch (e) {
-        console.log(e);
+        //move to score
+
+        window.location.href = `${window.location.origin}/partials/score.html`;
       }
     }
   });
 }
 if (window.location.href === `http://127.0.0.1:8080/partials/score.html`) {
-  const score = document.querySelector(".score");
+  const scoreBox = document.querySelector(".container1");
   const pkt = localStorage.getItem("pkt");
-  score.textContent = `Twój wynik to: ${pkt}`;
+  //get game from local storage
+  const game = localStorage.getItem("game");
+  const players = await getGameinfo(game);
+  console.log(players);
+  // for (let player of players.players) {
+  //   score.insertAdjacentHTML("afterbegin", `${player.name}: ${player.points}`);
+  // }
+  //create div with score class and insert score to it and insert it to scoreBox div
+
+  for (let player of players.players) {
+    let score = document.createElement("div");
+    score.classList.add("score");
+    scoreBox.appendChild(score);
+    score.insertAdjacentHTML(
+      "afterbegin",
+      `<h3>${player.name}: ${player.points}</h3>`
+    );
+  }
 }
