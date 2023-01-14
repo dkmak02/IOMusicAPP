@@ -57,6 +57,53 @@ async function getSong(gameId) {
 }
 if (
   window.location.href ===
+  `${window.location.origin}/partials/insertPlayers.html`
+) {
+  const addPlayerBtn = document.querySelector(".form-control2");
+  const okBtn = document.querySelector("#urlCheck");
+  const names = document.querySelector(".names");
+  const mode = localStorage.getItem("gameMode");
+  let ileGraczy = 0;
+  console.log(mode);
+  //gamne id e680bd74-9fb2-4404-b00a-6bca041cd442
+  addPlayerBtn.addEventListener("keyup", (e) => {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      const name = addPlayerBtn.value;
+      if (name.length > 0) {
+        const div = `<div class="asss">
+        ${name}
+    </div>`;
+        ileGraczy++;
+        names.insertAdjacentHTML("beforeend", div);
+        addPlayerBtn.value = "";
+        if (mode === "#single") {
+          window.location.replace(
+            `${window.location.origin}/partials/singleplayer.html`
+          );
+        }
+      }
+    }
+  });
+  okBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const name = addPlayerBtn.value;
+    if (name.length > 0) {
+      const div = `<div class="asss">
+      ${name}
+  </div>`;
+      names.insertAdjacentHTML("beforeend", div);
+      addPlayerBtn.value = "";
+      if (mode === "#single") {
+        window.location.replace(
+          `${window.location.origin}/partials/singleplayer.html`
+        );
+      }
+    }
+  });
+}
+if (
+  window.location.href ===
     `${window.location.origin}/partials/insertUrl.html#multi` ||
   window.location.href ===
     `${window.location.origin}/partials/insertUrl.html#single` ||
@@ -67,15 +114,43 @@ if (
   const btn = document.querySelector("#urlCheck");
   const chceckTeledyskButton = document.querySelector("#checkbox1");
   const mode = new URL(document.URL).hash;
+  if (mode === "#party") {
+    const ileG = document.querySelector(".iloscgraczy");
+    ileG.classList.remove("hidden");
+    const input = document.querySelector(".form-control3");
+    input.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (input.value < 0) {
+        input.value = 0;
+      }
+      if (input.value > 10) {
+        input.value = 10;
+      }
+      localStorage.setItem("ileGraczy", input.value);
+    });
+    input.addEventListener("keyup", (e) => {
+      e.preventDefault();
+      if (input.value < 0) {
+        input.value = 0;
+      }
+      if (input.value > 10) {
+        input.value = 10;
+      }
+      localStorage.setItem("ileGraczy", input.value);
+    });
+    //add input value to local storage
+  }
   insterUrl.addEventListener("keyup", async (e) => {
     if (e.keyCode === 13) {
       const showTeledysk = chceckTeledyskButton.checked;
       localStorage.setItem("showTeledysk", showTeledysk);
       url = insterUrl.value;
       localStorage.setItem("url", url);
-      window.location.replace(
-        `${window.location.origin}/partials/singleplayer.html`
-      );
+      const ileGraczy = localStorage.getItem("ileGraczy");
+      console.log(ileGraczy);
+      // window.location.replace(
+      //   `${window.location.origin}/partials/insertPlayers.html`
+      // );
     }
   });
 
@@ -85,7 +160,7 @@ if (
     url = insterUrl.value;
     localStorage.setItem("url", url);
     window.location.replace(
-      `${window.location.origin}/partials/singleplayer.html`
+      `${window.location.origin}/partials/insertPlayers.html`
     );
   });
   localStorage.setItem("gameMode", mode);
@@ -134,13 +209,16 @@ if (
   const dane = await getSongs(url);
   const game = await createGameNewPlaylist(dane, 1);
   const players = await addNewPlayerToGame(game, "player1");
+  const playersBox = document.querySelector(".players");
+  const addPlayer = `<div id="players"><h3>Player 1</h3></div>`;
+  playersBox.insertAdjacentHTML("afterbegin", addPlayer);
+  const gracz = document.querySelector("#players");
+  gracz.classList.add("active-player");
   //add game to local storage
   localStorage.setItem("game", game);
   let song = await getSong(game);
-  // await playerReply(game, song.id, tytul.value, wykonawca.value, 2);
   console.log(song);
   console.log(game);
-  // console.log(players);
   // console.log(dane);
   setDane(song);
   tytul.addEventListener("keyup", async (e) => {

@@ -136,6 +136,13 @@ body {
   margin-top: 25px;
   color: #ffffff;
 }
+.iloscgraczy {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+  color: #ffffff;
+}
 #checkbox {
   margin-left: 10px;
   margin-bottom: 10px;
@@ -275,6 +282,47 @@ body {
   border-radius: 0.75rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+.form-control2 {
+  display: block;
+  width: 20rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.form-control3 {
+  display: block;
+  width: 5rem;
+  margin-left: 1rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.asss {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+}
 .container-s {
   position: relative;
   /* display: flex; */
@@ -286,8 +334,6 @@ body {
   border-radius: 0.4rem;
   padding: 0.5rem;
   background-color: #292e338a;
-}
-.player-name {
   color: #000000;
 }
 .active-player {
