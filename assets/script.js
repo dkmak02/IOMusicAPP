@@ -55,16 +55,38 @@ async function getSong(gameId) {
   ).then((response) => response.json());
   return response;
 }
+async function getPlayers(gameId) {
+  const response = await fetch(
+    `https://yourmelodyapi20221119173116.azurewebsites.net/api/PlayerControler/GetPlayers/${gameId}`
+  ).then((response) => response.json());
+  return response;
+}
 if (
   window.location.href ===
   `${window.location.origin}/partials/insertPlayers.html`
 ) {
+  function ileGraczy1(ileJuz) {
+    //convert string to number
+    const ileMaxGraczy = parseInt(sessionStorage.getItem("ileGraczy"));
+    console.log(ileMaxGraczy);
+    console.log(ileJuz);
+    if (ileJuz === ileMaxGraczy) {
+      const okBtn = document.querySelector("#urlCheck");
+      const formG = document.querySelector(".form-group");
+      const dalej = document.querySelector(".dalej");
+      okBtn.classList.add("hidden");
+      formG.classList.add("hidden");
+      dalej.classList.remove("hidden");
+    }
+  }
   const addPlayerBtn = document.querySelector(".form-control2");
   const okBtn = document.querySelector("#urlCheck");
   const names = document.querySelector(".names");
-  const mode = localStorage.getItem("gameMode");
+  const mode = sessionStorage.getItem("gameMode");
+  const gameId = sessionStorage.getItem("gameId");
+  console.log(gameId);
+  sessionStorage.setItem("gameId", gameId);
   let ileGraczy = 0;
-  console.log(mode);
   //gamne id e680bd74-9fb2-4404-b00a-6bca041cd442
   addPlayerBtn.addEventListener("keyup", (e) => {
     if (e.keyCode === 13) {
@@ -77,11 +99,8 @@ if (
         ileGraczy++;
         names.insertAdjacentHTML("beforeend", div);
         addPlayerBtn.value = "";
-        if (mode === "#single") {
-          window.location.replace(
-            `${window.location.origin}/partials/singleplayer.html`
-          );
-        }
+        addNewPlayerToGame(gameId, name);
+        ileGraczy1(ileGraczy);
       }
     }
   });
@@ -92,13 +111,11 @@ if (
       const div = `<div class="asss">
       ${name}
   </div>`;
+      ileGraczy++;
       names.insertAdjacentHTML("beforeend", div);
       addPlayerBtn.value = "";
-      if (mode === "#single") {
-        window.location.replace(
-          `${window.location.origin}/partials/singleplayer.html`
-        );
-      }
+      addNewPlayerToGame(gameId, name);
+      ileGraczy1(ileGraczy);
     }
   });
 }
@@ -120,60 +137,73 @@ if (
     const input = document.querySelector(".form-control3");
     input.addEventListener("click", (e) => {
       e.preventDefault();
-      if (input.value < 0) {
-        input.value = 0;
+      if (input.value < 1) {
+        input.value = 1;
       }
       if (input.value > 10) {
         input.value = 10;
       }
-      localStorage.setItem("ileGraczy", input.value);
+      sessionStorage.setItem("ileGraczy", input.value);
     });
     input.addEventListener("keyup", (e) => {
       e.preventDefault();
-      if (input.value < 0) {
-        input.value = 0;
+      if (input.value < 1) {
+        input.value = 1;
       }
       if (input.value > 10) {
         input.value = 10;
       }
-      localStorage.setItem("ileGraczy", input.value);
+      sessionStorage.setItem("ileGraczy", input.value);
     });
-    //add input value to local storage
+  } else {
+    sessionStorage.setItem("ileGraczy", 1);
   }
   insterUrl.addEventListener("keyup", async (e) => {
     if (e.keyCode === 13) {
       const showTeledysk = chceckTeledyskButton.checked;
-      localStorage.setItem("showTeledysk", showTeledysk);
+      sessionStorage.setItem("showTeledysk", showTeledysk);
       url = insterUrl.value;
-      localStorage.setItem("url", url);
-      const ileGraczy = localStorage.getItem("ileGraczy");
-      console.log(ileGraczy);
-      // window.location.replace(
-      //   `${window.location.origin}/partials/insertPlayers.html`
-      // );
+      const dane = await getSongs(url);
+      const game = await createGameNewPlaylist(dane, tryGry);
+      sessionStorage.setItem("gameId", game);
+      window.location.replace(
+        `${window.location.origin}/partials/insertPlayers.html`
+      );
     }
   });
 
   btn.addEventListener("click", async () => {
     const showTeledysk = chceckTeledyskButton.checked;
-    localStorage.setItem("showTeledysk", showTeledysk);
+    sessionStorage.setItem("showTeledysk", showTeledysk);
+    let tryGry = 0;
+    if (mode === "#party") {
+      tryGry = 2;
+    } else if (mode === "#multi") {
+      tryGry = 3;
+    } else {
+      tryGry = 1;
+    }
     url = insterUrl.value;
-    localStorage.setItem("url", url);
+    const dane = await getSongs(url);
+    const game = await createGameNewPlaylist(dane, tryGry);
+    sessionStorage.setItem("gameId", game);
     window.location.replace(
       `${window.location.origin}/partials/insertPlayers.html`
     );
   });
-  localStorage.setItem("gameMode", mode);
+  sessionStorage.setItem("gameMode", mode);
 } else if (
   window.location.href ===
-  `${window.location.origin}/partials/singleplayer.html`
+  `${window.location.origin}/partials/singlePlayer.html`
 ) {
-  const mode = localStorage.getItem("gameMode");
-  const showTeledysk = localStorage.getItem("showTeledysk");
+  const showTeledysk = sessionStorage.getItem("showTeledysk");
   const player = document.querySelector(".musicBox-m");
-  const url = localStorage.getItem("url");
+  const url = sessionStorage.getItem("url");
   player.textContent = "";
-
+  if (showTeledysk === "false") {
+    player.style.height = "40px";
+    player.style.marginTop = "22rem";
+  }
   let artist;
   let title;
   let songId;
@@ -184,6 +214,10 @@ if (
   const wykonawca = document.querySelector("#wyko");
   const tytul = document.querySelector("#tyt");
   function setDane(song) {
+    const id = song.player.id;
+    console.log(id);
+    const player1 = document.querySelector(`.ee${id}`);
+    player1.classList.add("active-player");
     artist = song.artist;
     title = song.title;
     audioUrl = song.audioUrl;
@@ -194,28 +228,39 @@ if (
     end = secToStart + 15;
     videoUrl = videoUrl.replace("watch?v=", "embed/");
     videoUrl = videoUrl.substring(0, videoUrl.indexOf("&"));
-    player.insertAdjacentHTML(
-      "afterbegin",
-      `<iframe width="660" height="345" src="${videoUrl}?modestbranding=1&mute=1&autohide=1&showinfo=0&controls=0&autoplay=1&rel=0&start=${secToStart}&end=${end}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
-    );
-    // const audio = new Audio(audioUrl);
-    // audio.currentTime = secToStart;
-    // audio.play();
-    // setTimeout(() => {
-    //   audio.pause();
-    //   player.textContent = "";
-    // }, 15000);
+    if (showTeledysk === "true") {
+      player.insertAdjacentHTML(
+        "afterbegin",
+        `<iframe width="660" height="345" src="${videoUrl}?modestbranding=1&mute=0&autohide=1&showinfo=0&controls=0&autoplay=1&rel=0&start=${secToStart}&end=${end}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+      );
+      // const audio = new Audio(audioUrl);
+      // audio.currentTime = secToStart;
+      // audio.play();
+      setTimeout(() => {
+        // audio.pause();
+        player.textContent = "";
+      }, 15000);
+    }
   }
-  const dane = await getSongs(url);
-  const game = await createGameNewPlaylist(dane, 1);
-  const players = await addNewPlayerToGame(game, "player1");
+
+  const game = sessionStorage.getItem("gameId");
+  const gameInfo = await getGameinfo(game);
+  const players = gameInfo.players;
+  console.log(gameInfo);
   const playersBox = document.querySelector(".players");
-  const addPlayer = `<div id="players"><h3>Player 1</h3></div>`;
-  playersBox.insertAdjacentHTML("afterbegin", addPlayer);
-  const gracz = document.querySelector("#players");
-  gracz.classList.add("active-player");
+
+  for (let player of players) {
+    //cut player from first non number to end
+    const id = player.id;
+
+    const addPlayer = `<div class="ee${id}"><h4>${player.name}</h4></div>`;
+    playersBox.insertAdjacentHTML("beforeend", addPlayer);
+  }
+
+  // const gracz = document.querySelector("#players");
+  // gracz.classList.add("active-player");
   //add game to local storage
-  localStorage.setItem("game", game);
+  sessionStorage.setItem("game", game);
   let song = await getSong(game);
   console.log(song);
   console.log(game);
@@ -232,6 +277,8 @@ if (
           wykonawca.value,
           2
         );
+        const player1 = document.querySelector(`.ee${song.player.id}`);
+        player1.classList.remove("active-player");
         console.log(xd);
       } catch (e) {
         console.log(e);
@@ -240,8 +287,9 @@ if (
       try {
         song = await getSong(game);
         setDane(song);
+        console.log(song);
       } catch (e) {
-        console.log("niamdasd");
+        window.location.href = `${window.location.origin}/partials/score.html`;
       }
     }
   });
@@ -256,6 +304,8 @@ if (
           wykonawca.value,
           2
         );
+        const player1 = document.querySelector(`.ee${song.player.id}`);
+        player1.classList.remove("active-player");
         console.log(xd);
       } catch (e) {
         console.log(e);
@@ -264,6 +314,7 @@ if (
       try {
         song = await getSong(game);
         setDane(song);
+        console.log(song);
       } catch (e) {
         //move to score
 
@@ -274,17 +325,13 @@ if (
 }
 if (window.location.href === `http://127.0.0.1:8080/partials/score.html`) {
   const scoreBox = document.querySelector(".container1");
-  const pkt = localStorage.getItem("pkt");
   //get game from local storage
-  const game = localStorage.getItem("game");
-  const players = await getGameinfo(game);
+  const game = sessionStorage.getItem("gameId");
+  console.log(game);
+  const players = await getPlayers(game);
   console.log(players);
-  // for (let player of players.players) {
-  //   score.insertAdjacentHTML("afterbegin", `${player.name}: ${player.points}`);
-  // }
-  //create div with score class and insert score to it and insert it to scoreBox div
 
-  for (let player of players.players) {
+  for (let player of players) {
     let score = document.createElement("div");
     score.classList.add("score");
     scoreBox.appendChild(score);
