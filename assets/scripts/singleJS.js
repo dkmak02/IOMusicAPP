@@ -18,6 +18,8 @@ async function playerReply(gameId, songId, title, artist, responseTime) {
       method: "POST",
     }
   ).then((response) => response.json());
+  tytul.value = "";
+  wykonawca.value = "";
   return response;
 }
 async function respons(e) {
@@ -123,11 +125,7 @@ let song = await getSong(game);
 setDane(song);
 tytul.addEventListener("keyup", async (e) => {
   await respons(e);
-  tytul.value = "";
-  wykonawca.value = "";
 });
 wykonawca.addEventListener("keyup", async (e) => {
   await respons(e);
-  tytul.value = "";
-  wykonawca.value = "";
 });
