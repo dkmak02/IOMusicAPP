@@ -32,8 +32,8 @@ if (mode === "#party") {
     if (input.value < 1) {
       input.value = 1;
     }
-    if (input.value > 10) {
-      input.value = 10;
+    if (input.value > 5) {
+      input.value = 5;
     }
     sessionStorage.setItem("ileGraczy", input.value);
   });
@@ -42,8 +42,8 @@ if (mode === "#party") {
     if (input.value < 1) {
       input.value = 1;
     }
-    if (input.value > 10) {
-      input.value = 10;
+    if (input.value > 5) {
+      input.value = 5;
     }
     sessionStorage.setItem("ileGraczy", input.value);
   });

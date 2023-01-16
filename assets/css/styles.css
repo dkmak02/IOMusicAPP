@@ -16,7 +16,13 @@ body {
   justify-content: center;
   margin-top: 10%;
 }
-
+.logo1 {
+  display: grid;
+  --bs-body-color: #ffffff;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5%;
+}
 .custom-shape-divider-bottom-1667929878 {
   position: absolute;
   bottom: 0;
