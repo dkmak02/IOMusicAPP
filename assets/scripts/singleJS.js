@@ -42,7 +42,10 @@ const url = sessionStorage.getItem("url");
 player.textContent = "";
 if (showTeledysk === "false") {
   player.style.height = "40px";
-  player.style.marginTop = "22rem";
+  player.style.marginTop = "20%";
+  player.style.display = "flex";
+  player.style.justifyContent = "center";
+  player.style.alignItems = "center";
 }
 let artist;
 let title;
@@ -83,7 +86,7 @@ function setDane(song) {
   // audio.play();
   const xdt = setTimeout(() => {
     // audio.pause();
-    // player.textContent = "";
+    player.textContent = "";
   }, 15000);
   time = 0;
   const xdt1 = setInterval(() => {
