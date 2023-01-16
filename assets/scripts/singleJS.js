@@ -122,12 +122,12 @@ sessionStorage.setItem("game", game);
 let song = await getSong(game);
 setDane(song);
 tytul.addEventListener("keyup", async (e) => {
-  respons(e);
+  await respons(e);
   tytul.value = "";
   wykonawca.value = "";
 });
 wykonawca.addEventListener("keyup", async (e) => {
-  respons(e);
+  await respons(e);
   tytul.value = "";
   wykonawca.value = "";
 });
